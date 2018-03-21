@@ -12,5 +12,8 @@ public class MainActivity extends AppCompatActivity {
         int x = 0;
         int y = 1;
         int z = 344;
+
+
+        String sx = ""+y;
     }
 }
