@@ -1,7 +1,10 @@
-package com.android.recosta32.genericbitmapapp;
+package com.android.recosta32.genericbitmapapp.ui.main;
 
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+import com.android.recosta32.genericbitmapapp.R;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -9,5 +12,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
     }
 }
