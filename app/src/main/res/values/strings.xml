@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">GenericBitmapApp</string>
+    <!-- START activity_main.xml -->
+    <!-- END activity_main.xml -->
+
 </resources>

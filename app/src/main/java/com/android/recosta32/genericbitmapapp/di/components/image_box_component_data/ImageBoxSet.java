@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by recosta32 on 20/03/2018.
@@ -16,7 +17,6 @@ public class ImageBoxSet {
 
     private @NonNull
     ArrayList<ImageSet> images; // 0 = firstTop , 1 = secondTop , 2 = firstBottom , 3 = secondBottom
-
     public ImageBoxSet() {
         images = new ArrayList<>();
     }
@@ -57,30 +57,72 @@ public class ImageBoxSet {
         return getGenericSet(3);
     }
 
-    public int getSize(){
+    public @NonNull
+    Boolean isImageSetted(@NonNull final ImagePosition imagePosition) {
+        boolean exist = false;
+        switch (imagePosition) {
+            case FIRST_TOP: {
+                exist = getFirstTop() != null;
+            }
+            break;
+            case SECOND_TOP: {
+                exist = getSecondTop() != null;
+            }
+            break;
+            case FIRST_BOTTOM: {
+                exist = getFirstBottom() != null;
+            }
+            break;
+            case SECOND_BOTTOM: {
+                exist = getSecondBottom() != null;
+            }
+            break;
+        }
+        return exist;
+    }
+
+    public void setOutsideSceneRatio(@NonNull final Float ratio, @NonNull final ImagePosition imagePosition) {
+        if (imagePosition != ImagePosition.FIRST_TOP) {
+            if (isImageSetted(ImagePosition.FIRST_TOP))
+                getFirstTop().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.2));
+        }
+        if (imagePosition != ImagePosition.SECOND_TOP) {
+            if (isImageSetted(ImagePosition.SECOND_TOP))
+                getSecondTop().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.6));
+        }
+        if (imagePosition != ImagePosition.FIRST_BOTTOM) {
+            if (isImageSetted(ImagePosition.FIRST_BOTTOM))
+                getFirstBottom().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.1));
+        }
+        if (imagePosition != ImagePosition.SECOND_BOTTOM) {
+            if (isImageSetted(ImagePosition.SECOND_BOTTOM))
+                getSecondBottom().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.4));
+        }
+    }
+
+    public int getSize() {
         return images.size();
     }
 
     public ImageBoxSet resizeImageSet(@NonNull final ImagePosition imagePosition, @NonNull final Float imgSize) {
         switch (imagePosition) {
             case FIRST_TOP: {
-                if (getFirstTop() != null)
+                if (isImageSetted(ImagePosition.FIRST_TOP))
                     getFirstTop().resizeBitmap(imgSize);
-
             }
             break;
             case SECOND_TOP: {
-                if (getSecondTop() != null)
+                if (isImageSetted(ImagePosition.SECOND_TOP))
                     getSecondTop().resizeBitmap(imgSize);
             }
             break;
             case FIRST_BOTTOM: {
-                if (getFirstBottom() != null)
+                if (isImageSetted(ImagePosition.FIRST_BOTTOM))
                     getFirstBottom().resizeBitmap(imgSize);
             }
             break;
             case SECOND_BOTTOM: {
-                if (getSecondBottom() != null)
+                if (isImageSetted(ImagePosition.SECOND_BOTTOM))
                     getSecondBottom().resizeBitmap(imgSize);
             }
             break;
@@ -92,23 +134,23 @@ public class ImageBoxSet {
                                     @NonNull final ImagePosition imagePosition) {
         switch (imagePosition) {
             case FIRST_TOP: {
-                if (getFirstTop() != null)
+                if (isImageSetted(ImagePosition.FIRST_TOP))
                     drawFirstTop(canvas);
 
             }
             break;
             case SECOND_TOP: {
-                if (getSecondTop() != null)
+                if (isImageSetted(ImagePosition.SECOND_TOP))
                     drawSecondTop(canvas);
             }
             break;
             case FIRST_BOTTOM: {
-                if (getFirstBottom() != null)
+                if (isImageSetted(ImagePosition.FIRST_BOTTOM))
                     drawFirstBottom(canvas);
             }
             break;
             case SECOND_BOTTOM: {
-                if (getSecondBottom() != null)
+                if (isImageSetted(ImagePosition.SECOND_BOTTOM))
                     drawSecondBottom(canvas);
             }
             break;
@@ -128,24 +170,43 @@ public class ImageBoxSet {
         );
     }
 
-
     private ImageBoxSet drawFirstTop(@NonNull final Canvas canvas) {
-        drawBitmap(canvas, getFirstTop().getImg(), 0f, 0f);
+        drawBitmap(
+                canvas,
+                getFirstTop().getImg(),
+                0f,
+                getFirstTop().getImg().getHeight() * (-1 * getFirstTop().getAttributeSet().getmOutsideSceneRatio())
+        );
         return this;
     }
 
     private ImageBoxSet drawSecondTop(@NonNull final Canvas canvas) {
-        drawBitmap(canvas, getSecondTop().getImg(), (float) getSecondTop().getImg().getWidth(), 0f);
+        drawBitmap(
+                canvas,
+                getSecondTop().getImg(),
+                (float) getFirstTop().getImg().getWidth(),
+                getSecondTop().getImg().getHeight() * (-1 * getSecondTop().getAttributeSet().getmOutsideSceneRatio())
+        );
         return this;
     }
 
     private ImageBoxSet drawFirstBottom(@NonNull final Canvas canvas) {
-        drawBitmap(canvas, getFirstBottom().getImg(), 0f, (float) getFirstBottom().getImg().getWidth());
+        drawBitmap(
+                canvas,
+                getFirstBottom().getImg(),
+                0f,
+                (float) getFirstTop().getImg().getHeight() + getFirstBottom().getImg().getHeight() * (getFirstBottom().getAttributeSet().getmOutsideSceneRatio())
+        );
         return this;
     }
 
     private ImageBoxSet drawSecondBottom(@NonNull final Canvas canvas) {
-        drawBitmap(canvas, getSecondBottom().getImg(), (float) getSecondBottom().getImg().getWidth(), (float) getSecondBottom().getImg().getWidth());
+        drawBitmap(
+                canvas,
+                getSecondBottom().getImg(),
+                (float) getFirstBottom().getImg().getWidth(),
+                (float) getSecondBottom().getImg().getHeight() + getSecondBottom().getImg().getHeight() * (getSecondBottom().getAttributeSet().getmOutsideSceneRatio())
+        );
         return this;
     }
 

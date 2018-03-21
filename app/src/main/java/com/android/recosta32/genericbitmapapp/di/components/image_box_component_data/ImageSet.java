@@ -17,13 +17,13 @@ public class ImageSet {
     private @Nullable
     Float oldImgSize;
     private @NonNull
-    AttributeSet attributeSet;
+    BoxAttributeSet attributeSet;
 
     public ImageSet(@NonNull Bitmap img, String bkg) {
         this.img = img;
         this.bkg = bkg;
         this.oldImgSize = null;
-        this.attributeSet = new AttributeSet();
+        this.attributeSet = new BoxAttributeSet();
     }
 
     @NonNull
@@ -45,11 +45,11 @@ public class ImageSet {
     }
 
     @NonNull
-    public AttributeSet getAttributeSet() {
+    public BoxAttributeSet getAttributeSet() {
         return attributeSet;
     }
 
-    public void setAttributeSet(@NonNull AttributeSet attributeSet) {
+    public void setAttributeSet(@NonNull BoxAttributeSet attributeSet) {
         this.attributeSet = attributeSet;
     }
 
