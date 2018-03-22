@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 public class AnimationsHelper {
-    public static final long ANIMATION_EXPLODE_EXIT_MOVE_TIME = 2000;
+    public static final long ANIMATION_EXPLODE_EXIT_MOVE_TIME = 600;
 
     public static void startAnimationExplode(@NonNull final ImageBoxComponent imageBoxComponent,
                                              @NonNull final String attributeName) {
