@@ -6,6 +6,7 @@ package com.android.recosta32.genericbitmapapp.di.components.image_box_component
 
 public class BoxAttributeSet {
     private float mOutsideSceneRatio = 0f;
+    private float mResizeOffsetRatio = 0f;
 
     public float getmOutsideSceneRatio() {
         return mOutsideSceneRatio;
@@ -13,5 +14,13 @@ public class BoxAttributeSet {
 
     public void setmOutsideSceneRatio(float mOutsideSceneRatio) {
         this.mOutsideSceneRatio = mOutsideSceneRatio;
+    }
+
+    public float getmResizeOffsetRatio() {
+        return mResizeOffsetRatio;
+    }
+
+    public void setmResizeOffsetRatio(float mResizeOffsetRatio) {
+        this.mResizeOffsetRatio = mResizeOffsetRatio;
     }
 }
