@@ -72,17 +72,17 @@ public class ImageBoxComponent extends View implements View.OnTouchListener {
     /**
      * Value from 0 to 1 animated from animationHelper
      *
-     * @param mOutsideSceneRatio
+     * @param ratio
      */
-    public void setOutsideSceneRatio(float mOutsideSceneRatio) {
-        this.dataSet.setOutsideSceneRatio(mOutsideSceneRatio, mPositionSelected);
+    public void setExplodeAnimationRatio(float ratio) {
+        this.dataSet.setOutsideSceneRatio(ratio, mPositionSelected);
         invalidate();
     }
 
     private void manageImageSelection(@NonNull final ImageBoxSet.ImagePosition selected) {
         if (selected != null) {
             mPositionSelected = selected;
-            AnimationsHelper.startAnimationExplode(this, "outsideSceneRatio");
+            AnimationsHelper.startAnimationExplode(this, "explodeAnimationRatio");
         }
     }
 

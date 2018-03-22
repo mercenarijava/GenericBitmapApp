@@ -2,11 +2,16 @@ package com.android.recosta32.genericbitmapapp.di.components.image_box_component
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Xfermode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by recosta32 on 20/03/2018.
@@ -17,8 +22,18 @@ public class ImageBoxSet {
 
     private @NonNull
     ArrayList<ImageSet> images; // 0 = firstTop , 1 = secondTop , 2 = firstBottom , 3 = secondBottom
+
+    private @NonNull
+    Paint roundedCornersPaint;
+
     public ImageBoxSet() {
         images = new ArrayList<>();
+        init();
+    }
+
+    private void init() {
+        roundedCornersPaint = new Paint();
+        roundedCornersPaint.setAntiAlias(true);
     }
 
     public ImageBoxSet addImage(@NonNull final Bitmap img, @NonNull final String bkgColor) {
@@ -83,20 +98,28 @@ public class ImageBoxSet {
 
     public void setOutsideSceneRatio(@NonNull final Float ratio, @NonNull final ImagePosition imagePosition) {
         if (imagePosition != ImagePosition.FIRST_TOP) {
-            if (isImageSetted(ImagePosition.FIRST_TOP))
+            if (isImageSetted(ImagePosition.FIRST_TOP)) {
                 getFirstTop().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.2));
+                getFirstTop().getAttributeSet().setmResizeOffsetRatio(ratio);
+            }
         }
         if (imagePosition != ImagePosition.SECOND_TOP) {
-            if (isImageSetted(ImagePosition.SECOND_TOP))
+            if (isImageSetted(ImagePosition.SECOND_TOP)) {
                 getSecondTop().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.6));
+                getSecondTop().getAttributeSet().setmResizeOffsetRatio(ratio);
+            }
         }
         if (imagePosition != ImagePosition.FIRST_BOTTOM) {
-            if (isImageSetted(ImagePosition.FIRST_BOTTOM))
+            if (isImageSetted(ImagePosition.FIRST_BOTTOM)) {
                 getFirstBottom().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.1));
+                getFirstBottom().getAttributeSet().setmResizeOffsetRatio(ratio);
+            }
         }
         if (imagePosition != ImagePosition.SECOND_BOTTOM) {
-            if (isImageSetted(ImagePosition.SECOND_BOTTOM))
+            if (isImageSetted(ImagePosition.SECOND_BOTTOM)) {
                 getSecondBottom().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.4));
+                getSecondBottom().getAttributeSet().setmResizeOffsetRatio(ratio);
+            }
         }
     }
 
@@ -161,21 +184,33 @@ public class ImageBoxSet {
     private void drawBitmap(@NonNull final Canvas canvas,
                             @NonNull final Bitmap bitmap,
                             @NonNull final Float left,
-                            @NonNull final Float top) {
+                            @NonNull final Float top,
+                            @Nullable final Paint paint) {
         canvas.drawBitmap(
                 bitmap,
                 left,
                 top,
-                null
+                paint
         );
     }
 
     private ImageBoxSet drawFirstTop(@NonNull final Canvas canvas) {
+        final float marginTop = (int) (getFirstTop().getImg().getHeight() * (-1 * getFirstTop().getAttributeSet().getmOutsideSceneRatio()));
+        final float marginLeft = 0f;
+        Rect rect = new Rect(0,
+                0,
+                getFirstTop().getImg().getWidth(),
+                (int) ( getFirstTop().getImg().getHeight() + marginTop)
+        );
+        RectF rectF = new RectF(rect);
+        canvas.drawRoundRect(rectF, 30, 30, roundedCornersPaint);
+        roundedCornersPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         drawBitmap(
                 canvas,
                 getFirstTop().getImg(),
-                0f,
-                getFirstTop().getImg().getHeight() * (-1 * getFirstTop().getAttributeSet().getmOutsideSceneRatio())
+                marginLeft,
+                marginTop,
+                roundedCornersPaint
         );
         return this;
     }
@@ -185,7 +220,8 @@ public class ImageBoxSet {
                 canvas,
                 getSecondTop().getImg(),
                 (float) getFirstTop().getImg().getWidth(),
-                getSecondTop().getImg().getHeight() * (-1 * getSecondTop().getAttributeSet().getmOutsideSceneRatio())
+                getSecondTop().getImg().getHeight() * (-1 * getSecondTop().getAttributeSet().getmOutsideSceneRatio()),
+                null
         );
         return this;
     }
@@ -195,7 +231,8 @@ public class ImageBoxSet {
                 canvas,
                 getFirstBottom().getImg(),
                 0f,
-                (float) getFirstTop().getImg().getHeight() + getFirstBottom().getImg().getHeight() * (getFirstBottom().getAttributeSet().getmOutsideSceneRatio())
+                (float) getFirstTop().getImg().getHeight() + getFirstBottom().getImg().getHeight() * (getFirstBottom().getAttributeSet().getmOutsideSceneRatio()),
+                null
         );
         return this;
     }
@@ -205,7 +242,8 @@ public class ImageBoxSet {
                 canvas,
                 getSecondBottom().getImg(),
                 (float) getFirstBottom().getImg().getWidth(),
-                (float) getSecondBottom().getImg().getHeight() + getSecondBottom().getImg().getHeight() * (getSecondBottom().getAttributeSet().getmOutsideSceneRatio())
+                (float) getSecondBottom().getImg().getHeight() + getSecondBottom().getImg().getHeight() * (getSecondBottom().getAttributeSet().getmOutsideSceneRatio()),
+                null
         );
         return this;
     }
