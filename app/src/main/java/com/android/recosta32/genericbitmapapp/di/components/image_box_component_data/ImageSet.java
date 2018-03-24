@@ -24,7 +24,7 @@ public class ImageSet {
     BoxAttributeSet attributeSet;
 
 
-    public ImageSet(@NonNull final Bitmap img, @NonNull final String bkg) {
+    ImageSet(@NonNull final Bitmap img, @NonNull final String bkg) {
         this.img = img;
         this.bkg = bkg;
         this.bkgColor = Color.parseColor(this.bkg);
@@ -33,7 +33,7 @@ public class ImageSet {
     }
 
     @NonNull
-    public Bitmap getImg() {
+    Bitmap getImg() {
         return img;
     }
 
@@ -42,7 +42,7 @@ public class ImageSet {
     }
 
     @NonNull
-    public int getBkgColor() {
+    int getBkgColor() {
         return bkgColor;
     }
 
@@ -65,7 +65,7 @@ public class ImageSet {
         this.attributeSet = attributeSet;
     }
 
-    public ImageSet resizeBitmap(@NonNull final Float imgSize) {
+    ImageSet resizeBitmap(@NonNull final Float imgSize) {
         if (oldImgSize == null || oldImgSize != imgSize) {
             this.img = ImageUtils.getResizedBitmap(this.img, imgSize, imgSize);
             oldImgSize = imgSize;

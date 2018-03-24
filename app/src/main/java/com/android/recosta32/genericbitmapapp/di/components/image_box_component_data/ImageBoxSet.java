@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -22,7 +20,11 @@ public class ImageBoxSet {
 
     private @NonNull
     ArrayList<ImageSet> images; // 0 = firstTop , 1 = secondTop , 2 = firstBottom , 3 = secondBottom
+    private @Nullable
+    Integer lastPressedIndex;
 
+    private @NonNull
+    Paint bitmapPaint;
     private @NonNull
     Paint roundedCornersPaint;
     private @NonNull
@@ -34,9 +36,12 @@ public class ImageBoxSet {
     }
 
     private void init() {
+        bitmapPaint = new Paint();
+        bitmapPaint.setAntiAlias(true);
         roundedCornersPaint = new Paint();
         roundedCornersPaint.setAntiAlias(true);
         circleFillPaint = new Paint();
+        circleFillPaint.setAntiAlias(true);
         circleFillPaint.setStyle(Paint.Style.FILL);
         //circleFillPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
     }
@@ -115,27 +120,58 @@ public class ImageBoxSet {
         BoxAttributeSet.mCircleExpandRatio = ratio;
         if (pressed != ImagePosition.FIRST_TOP) {
             if (isImageSetted(ImagePosition.FIRST_TOP)) {
+                this.lastPressedIndex = 0;
                 getFirstTop().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.1));
                 getFirstTop().getAttributeSet().setmResizeOffsetRatio(ratio);
             }
         }
         if (pressed != ImagePosition.SECOND_TOP) {
             if (isImageSetted(ImagePosition.SECOND_TOP)) {
+                this.lastPressedIndex = 1;
                 getSecondTop().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.6));
                 getSecondTop().getAttributeSet().setmResizeOffsetRatio(ratio);
             }
         }
         if (pressed != ImagePosition.FIRST_BOTTOM) {
             if (isImageSetted(ImagePosition.FIRST_BOTTOM)) {
+                this.lastPressedIndex = 2;
                 getFirstBottom().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.6));
                 getFirstBottom().getAttributeSet().setmResizeOffsetRatio(ratio);
             }
         }
         if (pressed != ImagePosition.SECOND_BOTTOM) {
             if (isImageSetted(ImagePosition.SECOND_BOTTOM)) {
+                this.lastPressedIndex = 3;
                 getSecondBottom().getAttributeSet().setmOutsideSceneRatio((float) (ratio * 1.1));
                 getSecondBottom().getAttributeSet().setmResizeOffsetRatio(ratio);
             }
+        }
+    }
+
+    public void setPositionOffsetRatio(@NonNull final Float ratio, @NonNull final ImagePosition pressed) {
+        if (pressed == ImagePosition.FIRST_TOP && isImageSetted(ImagePosition.FIRST_TOP)) {
+            this.lastPressedIndex = 0;
+            getFirstTop().getAttributeSet().setmPositionOffsetRatio(ratio);
+        } else if (isImageSetted(ImagePosition.FIRST_TOP)) {
+            getFirstTop().getAttributeSet().setmSmallGrowRatio(ratio);
+        }
+        if (pressed == ImagePosition.SECOND_TOP && isImageSetted(ImagePosition.SECOND_TOP)) {
+            this.lastPressedIndex = 1;
+            getSecondTop().getAttributeSet().setmPositionOffsetRatio(ratio);
+        } else if (isImageSetted(ImagePosition.SECOND_TOP)) {
+            getSecondTop().getAttributeSet().setmSmallGrowRatio(ratio);
+        }
+        if (pressed == ImagePosition.FIRST_BOTTOM && isImageSetted(ImagePosition.FIRST_BOTTOM)) {
+            this.lastPressedIndex = 2;
+            getFirstBottom().getAttributeSet().setmPositionOffsetRatio(ratio);
+        } else if (isImageSetted(ImagePosition.FIRST_BOTTOM)) {
+            getFirstBottom().getAttributeSet().setmSmallGrowRatio(ratio);
+        }
+        if (pressed == ImagePosition.SECOND_BOTTOM && isImageSetted(ImagePosition.SECOND_BOTTOM)) {
+            this.lastPressedIndex = 3;
+            getSecondBottom().getAttributeSet().setmPositionOffsetRatio(ratio);
+        } else if (isImageSetted(ImagePosition.SECOND_BOTTOM)) {
+            getSecondBottom().getAttributeSet().setmSmallGrowRatio(ratio);
         }
     }
 
@@ -197,6 +233,14 @@ public class ImageBoxSet {
         return this;
     }
 
+    public ImageBoxSet drawFilledCircle(@NonNull final Canvas canvas) {
+        final Point circleCenter = getXYCenterCircle();
+        if (circleCenter != null) {
+            canvas.drawCircle(circleCenter.x, circleCenter.y, (canvas.getWidth() + canvas.getHeight()) * BoxAttributeSet.mCircleExpandRatio, getCircleFillPaint());
+        }
+        return this;
+    }
+
     private void drawBitmap(@NonNull final Canvas canvas,
                             @NonNull final Bitmap bitmap,
                             @NonNull final Float left,
@@ -250,21 +294,57 @@ public class ImageBoxSet {
         return null;
     }
 
+    private float getMarginLeft(@NonNull final Canvas canvas,
+                                @NonNull final ImageSet imageSet) {
+        final int canvasWidth = canvas.getWidth();
+        final float marginWidth = canvas.getWidth() / 18;
+        if (imageSet == getFirstTop() || imageSet == getFirstBottom()) {
+            return marginWidth * imageSet.getAttributeSet().getmPositionOffsetRatio();
+        } else {
+            return ((canvasWidth / 2 - marginWidth) * imageSet.getAttributeSet().getmPositionOffsetRatio());
+        }
+    }
+
+    private float getMarginTop(@NonNull final Canvas canvas,
+                               @NonNull final ImageSet imageSet) {
+        final int canvasHeight = canvas.getHeight();
+        final float marginHeight = canvas.getHeight() / 18;
+        if (imageSet == getFirstTop() || imageSet == getSecondTop()) {
+            return marginHeight * imageSet.getAttributeSet().getmPositionOffsetRatio();
+        } else {
+            return ((canvasHeight / 2 - marginHeight) * imageSet.getAttributeSet().getmPositionOffsetRatio());
+        }
+
+    }
+
+    private float getSmalChildHeight(@NonNull final Canvas canvas,
+                                     @NonNull final ImageSet imageSet) {
+        return ((canvas.getHeight() / 18) * 2) * imageSet.getAttributeSet().getmSmallGrowRatio();
+    }
+
+    private float getSmalChildWidth(@NonNull final Canvas canvas,
+                                    @NonNull final ImageSet imageSet) {
+        return ((canvas.getWidth() / 18) * 2) * imageSet.getAttributeSet().getmSmallGrowRatio();
+    }
+
+
     private ImageBoxSet drawGenericImageSet(@NonNull final Canvas canvas,
                                             @NonNull final ImageSet imageSet) {
         float marginTop = 0;//(int) (imageSet.getImg().getHeight() * (-1 * imageSet.getAttributeSet().getmOutsideSceneRatio()));
         float marginLeft = 0;
 
         if (imageSet == getFirstTop()) {
-            marginLeft = (imageSet.getImg().getWidth() * (-1 * imageSet.getAttributeSet().getmOutsideSceneRatio()));
+            marginLeft = (imageSet.getImg().getWidth() * (-1 * imageSet.getAttributeSet().getmOutsideSceneRatio())) + getMarginLeft(canvas, imageSet);
+            marginTop = getMarginTop(canvas, imageSet);
         } else if (imageSet == getSecondTop()) {
-            marginLeft = (imageSet.getImg().getWidth() + (imageSet.getImg().getWidth() * imageSet.getAttributeSet().getmOutsideSceneRatio()));
+            marginLeft = (imageSet.getImg().getWidth() + (imageSet.getImg().getWidth() * imageSet.getAttributeSet().getmOutsideSceneRatio())) - getMarginLeft(canvas, imageSet);
+            marginTop = getMarginTop(canvas, imageSet);
         } else if (imageSet == getFirstBottom()) {
-            marginLeft = (imageSet.getImg().getWidth() * (-1 * imageSet.getAttributeSet().getmOutsideSceneRatio()));
-            marginTop = imageSet.getImg().getHeight();
+            marginLeft = (imageSet.getImg().getWidth() * (-1 * imageSet.getAttributeSet().getmOutsideSceneRatio())) + getMarginLeft(canvas, imageSet);
+            marginTop = imageSet.getImg().getHeight() - getMarginTop(canvas, imageSet);
         } else if (imageSet == getSecondBottom()) {
-            marginLeft = (imageSet.getImg().getWidth() + (imageSet.getImg().getWidth() * imageSet.getAttributeSet().getmOutsideSceneRatio()));
-            marginTop = imageSet.getImg().getHeight();
+            marginLeft = (imageSet.getImg().getWidth() + (imageSet.getImg().getWidth() * imageSet.getAttributeSet().getmOutsideSceneRatio())) - getMarginLeft(canvas, imageSet);
+            marginTop = imageSet.getImg().getHeight() - getMarginTop(canvas, imageSet);
         }
 
         drawBitmap(
@@ -272,13 +352,34 @@ public class ImageBoxSet {
                 ImageUtils.getRoundedBitmapAndReducedWidth(imageSet.getImg(),
                         (int) (BoxAttributeSet.mImageSetCornerRadius * imageSet.getAttributeSet().getmResizeOffsetRatio()),
                         (int) ((imageSet.getImg().getWidth() / 8) *
-                                (1 - imageSet.getAttributeSet().getmResizeOffsetRatio() >= 0.6 ? imageSet.getAttributeSet().getmResizeOffsetRatio() : 0.7)
+                                imageSet.getAttributeSet().getmResizeOffsetRatio()
                         )
                 ),
                 marginLeft,
                 marginTop,
-                null
+                bitmapPaint
         );
+
+        /**
+         * SmallChild drawing
+         */
+        final int imageSetPosition = getFirstTop() == imageSet ? 0 : getSecondTop() == imageSet ? 1 : getFirstBottom() == imageSet ? 2 : 3;
+        final float childHeight = getSmalChildHeight(canvas, imageSet);
+        final float childWidth = getSmalChildWidth(canvas, imageSet);
+        final float childsMargin = (childHeight + childHeight / 2) / 4;
+        final float childMarginLeft = canvas.getWidth() - canvas.getWidth() / 18 - childWidth;
+        final float childMarginTop = canvas.getHeight() - ((childsMargin + childHeight) * (imageSetPosition + 1));
+        drawBitmap(
+                canvas,
+                ImageUtils.getRoundedBitmapAndReducedWidth(imageSet.getImg(),
+                        (int) (childHeight),
+                        (int) (childWidth)
+                ),
+                childMarginLeft,
+                childMarginTop,
+                bitmapPaint
+        );
+
 
         return this;
     }

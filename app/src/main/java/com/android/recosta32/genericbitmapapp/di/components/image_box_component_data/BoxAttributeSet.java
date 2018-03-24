@@ -5,33 +5,51 @@ package com.android.recosta32.genericbitmapapp.di.components.image_box_component
  */
 
 public class BoxAttributeSet {
-    public static final int mImageSetCornerRadius = 20;
-    public static float mCircleExpandRatio = 0f;
+    static final int mImageSetCornerRadius = 20;
+    static float mCircleExpandRatio = 0f;
     private float mOutsideSceneRatio = 0f;
     private float mResizeOffsetRatio = 0f;
+    private float mPositionOffsetRatio = 0f;
+    private float mSmallGrowRatio = 0f;
     private boolean mPressed = false;
 
-    public float getmOutsideSceneRatio() {
+    float getmOutsideSceneRatio() {
         return mOutsideSceneRatio;
     }
 
-    public void setmOutsideSceneRatio(float mOutsideSceneRatio) {
+    void setmOutsideSceneRatio(float mOutsideSceneRatio) {
         this.mOutsideSceneRatio = mOutsideSceneRatio;
     }
 
-    public float getmResizeOffsetRatio() {
+    float getmResizeOffsetRatio() {
         return mResizeOffsetRatio;
     }
 
-    public void setmResizeOffsetRatio(float mResizeOffsetRatio) {
+    void setmResizeOffsetRatio(float mResizeOffsetRatio) {
         this.mResizeOffsetRatio = mResizeOffsetRatio;
     }
 
-    public boolean ismPressed() {
+    boolean ismPressed() {
         return mPressed;
     }
 
     public void setmPressed(boolean mPressed) {
         this.mPressed = mPressed;
+    }
+
+    float getmPositionOffsetRatio() {
+        return mPositionOffsetRatio;
+    }
+
+    void setmPositionOffsetRatio(float mPositionOffsetRatio) {
+        this.mPositionOffsetRatio = mPositionOffsetRatio;
+    }
+
+    public float getmSmallGrowRatio() {
+        return mSmallGrowRatio;
+    }
+
+    public void setmSmallGrowRatio(float mSmallGrowRatio) {
+        this.mSmallGrowRatio = mSmallGrowRatio;
     }
 }

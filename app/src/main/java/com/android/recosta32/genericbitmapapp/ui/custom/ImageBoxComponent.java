@@ -3,7 +3,6 @@ package com.android.recosta32.genericbitmapapp.ui.custom;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.android.recosta32.genericbitmapapp.di.components.image_box_component_data.AnimationsHelper;
-import com.android.recosta32.genericbitmapapp.di.components.image_box_component_data.BoxAttributeSet;
 import com.android.recosta32.genericbitmapapp.di.components.image_box_component_data.ImageBoxSet;
 
 /**
@@ -81,6 +79,16 @@ public class ImageBoxComponent extends View implements View.OnTouchListener {
         invalidate();
     }
 
+    /**
+     * Value from 0 to 1 animated from animationHelper
+     *
+     * @param ratio
+     */
+    public void setPositionAnimationRatio(float ratio) {
+        this.dataSet.setPositionOffsetRatio(ratio, mPositionSelected);
+        invalidate();
+    }
+
     private void manageImageSelection(@NonNull final ImageBoxSet.ImagePosition selected) {
         if (selected != null) {
             mPositionSelected = selected;
@@ -88,7 +96,10 @@ public class ImageBoxComponent extends View implements View.OnTouchListener {
             dataSet.getSecondTop().getAttributeSet().setmPressed(selected == ImageBoxSet.ImagePosition.SECOND_TOP);
             dataSet.getFirstBottom().getAttributeSet().setmPressed(selected == ImageBoxSet.ImagePosition.FIRST_BOTTOM);
             dataSet.getSecondBottom().getAttributeSet().setmPressed(selected == ImageBoxSet.ImagePosition.SECOND_BOTTOM);
-            AnimationsHelper.startAnimationExplode(this, "explodeAnimationRatio");
+            AnimationsHelper.init()
+                    .addAnimationExplodeColorAndOutside(this, "explodeAnimationRatio")
+                    .addAnimationPosition(this, "positionAnimationRatio")
+                    .playTogether();
         }
     }
 
@@ -108,12 +119,8 @@ public class ImageBoxComponent extends View implements View.OnTouchListener {
                                    @NonNull final Integer width,
                                    @NonNull final Integer height,
                                    @NonNull final Float imgSize) {
-        final Point circleCenter = dataSet.getXYCenterCircle();
-        if (circleCenter != null) {
-            canvas.drawCircle(circleCenter.x, circleCenter.y, (canvas.getWidth() + canvas.getHeight()) * BoxAttributeSet.mCircleExpandRatio, dataSet.getCircleFillPaint());
-        }
-
-        dataSet.resizeImageSet(ImageBoxSet.ImagePosition.FIRST_TOP, imgSize)
+        dataSet.drawFilledCircle(canvas)
+                .resizeImageSet(ImageBoxSet.ImagePosition.FIRST_TOP, imgSize)
                 .drawImageSet(canvas, ImageBoxSet.ImagePosition.FIRST_TOP)
                 .resizeImageSet(ImageBoxSet.ImagePosition.SECOND_TOP, imgSize)
                 .drawImageSet(canvas, ImageBoxSet.ImagePosition.SECOND_TOP)
