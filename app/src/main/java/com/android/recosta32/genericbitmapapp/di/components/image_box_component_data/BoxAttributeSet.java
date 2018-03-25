@@ -5,12 +5,13 @@ package com.android.recosta32.genericbitmapapp.di.components.image_box_component
  */
 
 public class BoxAttributeSet {
-    static final int mImageSetCornerRadius = 20;
+    static final int mImageSetCornerRadius = 30;
     static float mCircleExpandRatio = 0f;
     private float mOutsideSceneRatio = 0f;
     private float mResizeOffsetRatio = 0f;
     private float mPositionOffsetRatio = 0f;
     private float mSmallGrowRatio = 0f;
+    private float mImageAdaptingRatio = 0f;
     private boolean mPressed = false;
 
     float getmOutsideSceneRatio() {
@@ -45,11 +46,19 @@ public class BoxAttributeSet {
         this.mPositionOffsetRatio = mPositionOffsetRatio;
     }
 
-    public float getmSmallGrowRatio() {
+    float getmSmallGrowRatio() {
         return mSmallGrowRatio;
     }
 
-    public void setmSmallGrowRatio(float mSmallGrowRatio) {
+    void setmSmallGrowRatio(float mSmallGrowRatio) {
         this.mSmallGrowRatio = mSmallGrowRatio;
+    }
+
+    float getmImageAdaptingRatio() {
+        return mImageAdaptingRatio;
+    }
+
+    void setmImageAdaptingRatio(float mImageAdaptingRatio) {
+        this.mImageAdaptingRatio = mImageAdaptingRatio;
     }
 }

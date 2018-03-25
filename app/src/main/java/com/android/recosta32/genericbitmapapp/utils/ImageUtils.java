@@ -231,7 +231,6 @@ public class ImageUtils {
         return resizedBitmap;
     }
 
-
     public static Bitmap getRoundedBitmapAndReducedWidth(Bitmap srcBitmap, final int cornerRadius, final int offset) {
         // Initialize a new instance of Bitmap
         Bitmap dstBitmap = Bitmap.createBitmap(
@@ -247,6 +246,44 @@ public class ImageUtils {
         Rect rect = new Rect(0, offset, srcBitmap.getWidth(), srcBitmap.getHeight() - offset);
         RectF rectF = new RectF(rect);
         canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(srcBitmap, 0, 0, paint);
+        return dstBitmap;
+    }
+
+    public static Bitmap getSquareCornerRounded(@NonNull Bitmap srcBitmap, final int radius, final int cornerRadius) {
+
+        // Initialize a new instance of Bitmap
+        Bitmap dstBitmap = Bitmap.createBitmap(
+                (radius * 2) <= 0? 1 : radius * 2, // Width
+                (radius * 2) <= 0? 1 : radius * 2, // Height
+
+                Bitmap.Config.ARGB_8888 // Config
+        );
+        Canvas canvas = new Canvas(dstBitmap);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        Rect rect = new Rect(0, 0, (radius * 2) + 1, (radius * 2) + 1);
+        RectF rectF = new RectF(rect);
+        canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(srcBitmap, 0, 0, paint);
+        return dstBitmap;
+    }
+
+    public static Bitmap getCircleBitmap(@NonNull Bitmap srcBitmap, final int radius) {
+
+        // Initialize a new instance of Bitmap
+        Bitmap dstBitmap = Bitmap.createBitmap(
+                (radius * 2) <= 0? 1 : radius * 2, // Width
+                (radius * 2) <= 0? 1 : radius * 2, // Height
+
+                Bitmap.Config.ARGB_8888 // Config
+        );
+        Canvas canvas = new Canvas(dstBitmap);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        canvas.drawCircle(radius, radius, radius, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(srcBitmap, 0, 0, paint);
         return dstBitmap;

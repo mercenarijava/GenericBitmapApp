@@ -31,6 +31,8 @@ public class ImageBoxComponent extends View implements View.OnTouchListener {
     SIZE mSizeOn = SIZE.NONE;
     private @Nullable
     ImageBoxSet.ImagePosition mPositionSelected;
+    private @NonNull
+    Boolean isOpen = false;
 
     public ImageBoxComponent(Context context) {
         super(context);
@@ -89,18 +91,43 @@ public class ImageBoxComponent extends View implements View.OnTouchListener {
         invalidate();
     }
 
+    /**
+     * Value from 0 to 1 animated from animationHelper
+     *
+     * @param ratio
+     */
+    public void setSmallGrowingRatio(float ratio) {
+        this.dataSet.setSemallGrowingRatio(ratio, mPositionSelected);
+        invalidate();
+    }
+
+    /**
+     * Value from 0 to 1 animated from animationHelper
+     *
+     * @param ratio
+     */
+    public void setImageAdaptingRatio(float ratio) {
+        this.dataSet.setImageAdaptingRatio(ratio, mPositionSelected);
+        invalidate();
+    }
+
     private void manageImageSelection(@NonNull final ImageBoxSet.ImagePosition selected) {
-        if (selected != null) {
-            mPositionSelected = selected;
+        isOpen = true;
+        mPositionSelected = selected;
+        if (dataSet.isImageSetted(ImageBoxSet.ImagePosition.FIRST_TOP))
             dataSet.getFirstTop().getAttributeSet().setmPressed(selected == ImageBoxSet.ImagePosition.FIRST_TOP);
+        if (dataSet.isImageSetted(ImageBoxSet.ImagePosition.SECOND_TOP))
             dataSet.getSecondTop().getAttributeSet().setmPressed(selected == ImageBoxSet.ImagePosition.SECOND_TOP);
+        if (dataSet.isImageSetted(ImageBoxSet.ImagePosition.FIRST_BOTTOM))
             dataSet.getFirstBottom().getAttributeSet().setmPressed(selected == ImageBoxSet.ImagePosition.FIRST_BOTTOM);
+        if (dataSet.isImageSetted(ImageBoxSet.ImagePosition.SECOND_BOTTOM))
             dataSet.getSecondBottom().getAttributeSet().setmPressed(selected == ImageBoxSet.ImagePosition.SECOND_BOTTOM);
-            AnimationsHelper.init()
-                    .addAnimationExplodeColorAndOutside(this, "explodeAnimationRatio")
-                    .addAnimationPosition(this, "positionAnimationRatio")
-                    .playTogether();
-        }
+        AnimationsHelper.init()
+                .addAnimationExplodeColorAndOutside(this, "explodeAnimationRatio", 0f, 1f)
+                .addAnimationPosition(this, "positionAnimationRatio", 0f, 1f)
+                .addSmallGrowing(this, "smallGrowingRatio", 0f, 1f)
+                .addAnimationAdapting(this, "imageAdaptingRatio", 0f, 1f)
+                .playTogether();
     }
 
     private void measureView(@NonNull final Integer width) {
@@ -152,18 +179,20 @@ public class ImageBoxComponent extends View implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
-                final Float x = event.getX();
-                final Float y = event.getY();
-                final Integer width = getWidth();
-                final Integer midView = width / 2;
-                if (x < midView && y < midView) {
-                    manageImageSelection(ImageBoxSet.ImagePosition.FIRST_TOP);
-                } else if (x > midView && y < midView) {
-                    manageImageSelection(ImageBoxSet.ImagePosition.SECOND_TOP);
-                } else if (x < midView && y > midView) {
-                    manageImageSelection(ImageBoxSet.ImagePosition.FIRST_BOTTOM);
-                } else if (x > midView && y > midView) {
-                    manageImageSelection(ImageBoxSet.ImagePosition.SECOND_BOTTOM);
+                if (!isOpen) {
+                    final Float x = event.getX();
+                    final Float y = event.getY();
+                    final Integer width = getWidth();
+                    final Integer midView = width / 2;
+                    if (x < midView && y < midView) {
+                        manageImageSelection(ImageBoxSet.ImagePosition.FIRST_TOP);
+                    } else if (x > midView && y < midView) {
+                        manageImageSelection(ImageBoxSet.ImagePosition.SECOND_TOP);
+                    } else if (x < midView && y > midView) {
+                        manageImageSelection(ImageBoxSet.ImagePosition.FIRST_BOTTOM);
+                    } else if (x > midView && y > midView) {
+                        manageImageSelection(ImageBoxSet.ImagePosition.SECOND_BOTTOM);
+                    }
                 }
             }
             break;

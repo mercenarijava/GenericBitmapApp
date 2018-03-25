@@ -152,28 +152,52 @@ public class ImageBoxSet {
         if (pressed == ImagePosition.FIRST_TOP && isImageSetted(ImagePosition.FIRST_TOP)) {
             this.lastPressedIndex = 0;
             getFirstTop().getAttributeSet().setmPositionOffsetRatio(ratio);
-        } else if (isImageSetted(ImagePosition.FIRST_TOP)) {
-            getFirstTop().getAttributeSet().setmSmallGrowRatio(ratio);
         }
         if (pressed == ImagePosition.SECOND_TOP && isImageSetted(ImagePosition.SECOND_TOP)) {
             this.lastPressedIndex = 1;
             getSecondTop().getAttributeSet().setmPositionOffsetRatio(ratio);
-        } else if (isImageSetted(ImagePosition.SECOND_TOP)) {
-            getSecondTop().getAttributeSet().setmSmallGrowRatio(ratio);
         }
         if (pressed == ImagePosition.FIRST_BOTTOM && isImageSetted(ImagePosition.FIRST_BOTTOM)) {
             this.lastPressedIndex = 2;
             getFirstBottom().getAttributeSet().setmPositionOffsetRatio(ratio);
-        } else if (isImageSetted(ImagePosition.FIRST_BOTTOM)) {
-            getFirstBottom().getAttributeSet().setmSmallGrowRatio(ratio);
         }
         if (pressed == ImagePosition.SECOND_BOTTOM && isImageSetted(ImagePosition.SECOND_BOTTOM)) {
             this.lastPressedIndex = 3;
             getSecondBottom().getAttributeSet().setmPositionOffsetRatio(ratio);
-        } else if (isImageSetted(ImagePosition.SECOND_BOTTOM)) {
+        }
+    }
+
+    public void setSemallGrowingRatio(@NonNull final Float ratio, @NonNull final ImagePosition pressed) {
+        if (pressed != ImagePosition.FIRST_TOP && isImageSetted(ImagePosition.FIRST_TOP)) {
+            getFirstTop().getAttributeSet().setmSmallGrowRatio(ratio);
+        }
+        if (pressed != ImagePosition.SECOND_TOP && isImageSetted(ImagePosition.SECOND_TOP)) {
+            getSecondTop().getAttributeSet().setmSmallGrowRatio(ratio);
+        }
+        if (pressed != ImagePosition.FIRST_BOTTOM && isImageSetted(ImagePosition.FIRST_BOTTOM)) {
+            getFirstBottom().getAttributeSet().setmSmallGrowRatio(ratio);
+        }
+        if (pressed != ImagePosition.SECOND_BOTTOM && isImageSetted(ImagePosition.SECOND_BOTTOM)) {
             getSecondBottom().getAttributeSet().setmSmallGrowRatio(ratio);
         }
     }
+
+    public void setImageAdaptingRatio(@NonNull final Float ratio, @NonNull final ImagePosition pressed) {
+
+        if (pressed == ImagePosition.FIRST_TOP && isImageSetted(ImagePosition.FIRST_TOP)) {
+            getFirstTop().getAttributeSet().setmImageAdaptingRatio(ratio);
+        }
+        if (pressed == ImagePosition.SECOND_TOP && isImageSetted(ImagePosition.SECOND_TOP)) {
+            getSecondTop().getAttributeSet().setmImageAdaptingRatio(ratio);
+        }
+        if (pressed == ImagePosition.FIRST_BOTTOM && isImageSetted(ImagePosition.FIRST_BOTTOM)) {
+            getFirstBottom().getAttributeSet().setmImageAdaptingRatio(ratio);
+        }
+        if (pressed == ImagePosition.SECOND_BOTTOM && isImageSetted(ImagePosition.SECOND_BOTTOM)) {
+            getSecondBottom().getAttributeSet().setmImageAdaptingRatio(ratio);
+        }
+    }
+
 
     public int getSize() {
         return images.size();
@@ -308,7 +332,7 @@ public class ImageBoxSet {
     private float getMarginTop(@NonNull final Canvas canvas,
                                @NonNull final ImageSet imageSet) {
         final int canvasHeight = canvas.getHeight();
-        final float marginHeight = canvas.getHeight() / 18;
+        final float marginHeight = canvas.getHeight() / 30;
         if (imageSet == getFirstTop() || imageSet == getSecondTop()) {
             return marginHeight * imageSet.getAttributeSet().getmPositionOffsetRatio();
         } else {
@@ -319,12 +343,12 @@ public class ImageBoxSet {
 
     private float getSmalChildHeight(@NonNull final Canvas canvas,
                                      @NonNull final ImageSet imageSet) {
-        return ((canvas.getHeight() / 18) * 2) * imageSet.getAttributeSet().getmSmallGrowRatio();
+        return (float) (((canvas.getHeight() / 18) * 2.4) * imageSet.getAttributeSet().getmSmallGrowRatio());
     }
 
     private float getSmalChildWidth(@NonNull final Canvas canvas,
                                     @NonNull final ImageSet imageSet) {
-        return ((canvas.getWidth() / 18) * 2) * imageSet.getAttributeSet().getmSmallGrowRatio();
+        return (float) (((canvas.getWidth() / 18) * 2.4) * imageSet.getAttributeSet().getmSmallGrowRatio());
     }
 
 
@@ -349,7 +373,12 @@ public class ImageBoxSet {
 
         drawBitmap(
                 canvas,
-                ImageUtils.getRoundedBitmapAndReducedWidth(imageSet.getImg(),
+                ImageUtils.getRoundedBitmapAndReducedWidth(
+                        ImageUtils.getResizedBitmap(
+                                imageSet.getImg(),
+                                imageSet.getImg().getWidth() + ((imageSet.getImg().getWidth() / 2) * imageSet.getAttributeSet().getmImageAdaptingRatio()),
+                                imageSet.getImg().getHeight() + imageSet.getImg().getHeight() * imageSet.getAttributeSet().getmImageAdaptingRatio()
+                        ),
                         (int) (BoxAttributeSet.mImageSetCornerRadius * imageSet.getAttributeSet().getmResizeOffsetRatio()),
                         (int) ((imageSet.getImg().getWidth() / 8) *
                                 imageSet.getAttributeSet().getmResizeOffsetRatio()
@@ -363,18 +392,16 @@ public class ImageBoxSet {
         /**
          * SmallChild drawing
          */
-        final int imageSetPosition = getFirstTop() == imageSet ? 0 : getSecondTop() == imageSet ? 1 : getFirstBottom() == imageSet ? 2 : 3;
+        int imageSetPosition = getFirstTop() == imageSet ? 0 : getSecondTop() == imageSet ? 1 : getFirstBottom() == imageSet ? 2 : 3;
+        imageSetPosition = (lastPressedIndex != null && imageSetPosition > lastPressedIndex) ? imageSetPosition - 1 : imageSetPosition;
         final float childHeight = getSmalChildHeight(canvas, imageSet);
         final float childWidth = getSmalChildWidth(canvas, imageSet);
-        final float childsMargin = (childHeight + childHeight / 2) / 4;
-        final float childMarginLeft = canvas.getWidth() - canvas.getWidth() / 18 - childWidth;
+        final float childsMargin = (childHeight + (childHeight / 2)) / 12;
         final float childMarginTop = canvas.getHeight() - ((childsMargin + childHeight) * (imageSetPosition + 1));
+        final float childMarginLeft = canvas.getWidth() - childWidth - childsMargin;
         drawBitmap(
                 canvas,
-                ImageUtils.getRoundedBitmapAndReducedWidth(imageSet.getImg(),
-                        (int) (childHeight),
-                        (int) (childWidth)
-                ),
+                ImageUtils.getCircleBitmap(imageSet.getImg(), (int) (childHeight / 2.1)),
                 childMarginLeft,
                 childMarginTop,
                 bitmapPaint

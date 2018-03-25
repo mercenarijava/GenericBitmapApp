@@ -20,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
         ImageBoxComponent imageBoxComponent = (ImageBoxComponent) findViewById(R.id.test);
         imageBoxComponent.addImage(createImage(1024, 800, ContextCompat.getColor(getBaseContext(), R.color.black)), "#607D8B")
                 .addImage(createImage(1024, 800, ContextCompat.getColor(getBaseContext(), R.color.colorAccent)), "#9E9E9E")
-                .addImage(createImage(1024, 800, ContextCompat.getColor(getBaseContext(), R.color.colorPrimary)), "#795548")
-                .addImage(createImage(1024, 800, ContextCompat.getColor(getBaseContext(), R.color.colorPrimaryDark)), "#FF5722");
-
+                .addImage(createImage(1024, 800, ContextCompat.getColor(getBaseContext(), R.color.colorPrimaryDark)), "#795548")
+                .addImage(createImage(1024, 800, ContextCompat.getColor(getBaseContext(), R.color.colorPrimary)), "#FF5722");
+        //createImage(1024, 800, ContextCompat.getColor(getBaseContext(), R.color.black)
     }
 
 

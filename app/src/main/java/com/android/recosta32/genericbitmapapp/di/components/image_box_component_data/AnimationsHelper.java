@@ -18,7 +18,9 @@ import java.util.List;
 
 public class AnimationsHelper {
     static final long ANIMATION_EXPLODE_EXIT_MOVE_TIME = 600;
-    static final long ANIMATION_EXPLODE_EXIT_POSITION_TIME = 800;
+    static final long ANIMATION_EXPLODE_EXIT_POSITION_TIME = 900;
+    static final long ANIMATION_EXPLODE_SMALL_GROWING_TIME = 1100;
+    static final long ANIMATION_EXPLODE_ADAPTING_POSITION_TIME = 800;
 
     @NonNull
     private List<Animator> animators;
@@ -34,24 +36,54 @@ public class AnimationsHelper {
     }
 
     public AnimationsHelper addAnimationExplodeColorAndOutside(@NonNull final ImageBoxComponent imageBoxComponent,
-                                                               @NonNull final String attributeName) {
-        final ObjectAnimator mOutsideShiftAnim = ObjectAnimator.ofFloat(
-                imageBoxComponent, attributeName, 0f, 1f);
-        mOutsideShiftAnim.setRepeatCount(0);
-        mOutsideShiftAnim.setDuration(ANIMATION_EXPLODE_EXIT_MOVE_TIME);
-        mOutsideShiftAnim.setInterpolator(new AccelerateInterpolator());
-        animators.add(mOutsideShiftAnim);
+                                                               @NonNull final String attributeName,
+                                                               @NonNull final Float startF,
+                                                               @NonNull final Float stopF) {
+        final ObjectAnimator anim = ObjectAnimator.ofFloat(
+                imageBoxComponent, attributeName, startF, stopF);
+        anim.setRepeatCount(0);
+        anim.setDuration(ANIMATION_EXPLODE_EXIT_MOVE_TIME);
+        anim.setInterpolator(new AccelerateInterpolator());
+        animators.add(anim);
         return this;
     }
 
     public AnimationsHelper addAnimationPosition(@NonNull final ImageBoxComponent imageBoxComponent,
-                                                 @NonNull final String attributeName) {
-        final ObjectAnimator mPositionOffsetAnim = ObjectAnimator.ofFloat(
-                imageBoxComponent, attributeName, 0f, 1f);
-        mPositionOffsetAnim.setRepeatCount(0);
-        mPositionOffsetAnim.setDuration(ANIMATION_EXPLODE_EXIT_POSITION_TIME);
-        mPositionOffsetAnim.setInterpolator(new OvershootInterpolator());
-        animators.add(mPositionOffsetAnim);
+                                                 @NonNull final String attributeName,
+                                                 @NonNull final Float startF,
+                                                 @NonNull final Float stopF) {
+        final ObjectAnimator anim = ObjectAnimator.ofFloat(
+                imageBoxComponent, attributeName, startF, stopF);
+        anim.setRepeatCount(0);
+        anim.setDuration(ANIMATION_EXPLODE_EXIT_POSITION_TIME);
+        anim.setInterpolator(new OvershootInterpolator());
+        animators.add(anim);
+        return this;
+    }
+
+    public AnimationsHelper addSmallGrowing(@NonNull final ImageBoxComponent imageBoxComponent,
+                                            @NonNull final String attributeName,
+                                            @NonNull final Float startF,
+                                            @NonNull final Float stopF) {
+        final ObjectAnimator anim = ObjectAnimator.ofFloat(
+                imageBoxComponent, attributeName, startF, stopF);
+        anim.setRepeatCount(0);
+        anim.setDuration(ANIMATION_EXPLODE_SMALL_GROWING_TIME);
+        anim.setInterpolator(new OvershootInterpolator());
+        animators.add(anim);
+        return this;
+    }
+
+    public AnimationsHelper addAnimationAdapting(@NonNull final ImageBoxComponent imageBoxComponent,
+                                                 @NonNull final String attributeName,
+                                                 @NonNull final Float startF,
+                                                 @NonNull final Float stopF) {
+        final ObjectAnimator anim = ObjectAnimator.ofFloat(
+                imageBoxComponent, attributeName, startF, stopF);
+        anim.setRepeatCount(0);
+        anim.setDuration(ANIMATION_EXPLODE_ADAPTING_POSITION_TIME);
+        anim.setInterpolator(new OvershootInterpolator());
+        animators.add(anim);
         return this;
     }
 
